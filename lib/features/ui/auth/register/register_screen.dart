@@ -1,11 +1,16 @@
+import 'package:e_commerce_app/config/di/di.dart';
 import 'package:e_commerce_app/core/utils/app_assets.dart';
 import 'package:e_commerce_app/core/utils/app_colors.dart';
 import 'package:e_commerce_app/core/utils/app_routes.dart';
 import 'package:e_commerce_app/core/utils/app_styles.dart';
+import 'package:e_commerce_app/core/utils/dialog_utils.dart';
 import 'package:e_commerce_app/core/utils/validators.dart';
+import 'package:e_commerce_app/features/ui/auth/register/cubit/register_view_model.dart';
+import 'package:e_commerce_app/features/ui/auth/states/auth_states.dart';
 import 'package:e_commerce_app/features/ui/widgets/custom_elevated_button.dart';
 import 'package:e_commerce_app/features/ui/widgets/custom_text_form_field.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -31,174 +36,202 @@ class _RegisterScreenState extends State<RegisterScreen> {
   TextEditingController rePasswordController = TextEditingController(
     text: "15261548@A",
   );
-  var formKey = GlobalKey<FormState>();
 
   /// ✅ flags for showing/hiding passwords
   bool isPasswordVisible = false;
   bool isRePasswordVisible = false;
 
-  void register() async {
-    if (formKey.currentState!.validate()) {
-      //todo: signup
-    }
-  }
+  RegisterViewModel viewModel = getIt<RegisterViewModel>();
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.primaryColor,
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Padding(
-              padding: EdgeInsets.only(
-                top: 91.h,
-                bottom: 10.h,
-                left: 97.w,
-                right: 97.w,
+    return BlocListener<RegisterViewModel, AuthStates>(
+      bloc: viewModel,
+      listener: (context, state) {
+        if (state is AuthLoadingState) {
+          DialogUtils.showLoading(context: context, message: "Waiting...");
+        } else if (state is AuthErrorState) {
+          DialogUtils.hideLoading(context);
+          DialogUtils.showMessage(
+            context: context,
+            message: state.message,
+            title: 'Error',
+            posActionName: "Ok",
+          );
+        } else if (state is AuthSuccessState) {
+          DialogUtils.hideLoading(context);
+          DialogUtils.showMessage(
+            context: context,
+            message: "Register Successfully",
+            title: 'Success',
+            posActionName: "Ok",
+          );
+        }
+      },
+      child: Scaffold(
+        backgroundColor: AppColors.primaryColor,
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              Padding(
+                padding: EdgeInsets.only(
+                  top: 91.h,
+                  bottom: 10.h,
+                  left: 97.w,
+                  right: 97.w,
+                ),
+                child: Image.asset(AppAssets.appBarLeading),
               ),
-              child: Image.asset(AppAssets.appBarLeading),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.w),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(top: 40.h),
-                    child: Form(
-                      key: formKey,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Text("Full Name", style: AppStyles.medium18White),
-                          SizedBox(height: 10.h),
-                          CustomTextFormField(
-                            keyboardType: TextInputType.name,
-                            hintText: "enter your full name",
-                            hintStyle: AppStyles.light18HintText,
-                            controller: fullNameController,
-                            validate: AppValidators.validateFullName,
-                          ),
-                          SizedBox(height: 10.h),
-                          Text("Mobile Number", style: AppStyles.medium18White),
-                          SizedBox(height: 10.h),
-                          CustomTextFormField(
-                            keyboardType: TextInputType.phone,
-                            hintText: "enter your mobile number",
-                            hintStyle: AppStyles.light18HintText,
-                            controller: phoneController,
-                            validate: AppValidators.validatePhoneNumber,
-                          ),
-                          SizedBox(height: 10.h),
-                          Text(
-                            "E-mail address",
-                            style: AppStyles.medium18White,
-                          ),
-                          SizedBox(height: 10.h),
-                          CustomTextFormField(
-                            keyboardType: TextInputType.emailAddress,
-                            hintText: "enter your email address",
-                            hintStyle: AppStyles.light18HintText,
-                            controller: mailController,
-                            validate: AppValidators.validateEmail,
-                          ),
-                          SizedBox(height: 10.h),
-                          Text("Password", style: AppStyles.medium18White),
-                          SizedBox(height: 10.h),
-                          CustomTextFormField(
-                            keyboardType: TextInputType.visiblePassword,
-                            hintText: "enter your password",
-                            hintStyle: AppStyles.light18HintText,
-                            controller: passwordController,
-                            validate: AppValidators.validatePassword,
-                            obscureText: !isPasswordVisible, // ✅
-                            suffixIcon: IconButton(
-                              onPressed: () {
-                                setState(() {
-                                  isPasswordVisible = !isPasswordVisible;
-                                });
-                              },
-                              icon: Icon(
-                                isPasswordVisible
-                                    ? Icons.visibility
-                                    : Icons.visibility_off,
-                                color: AppColors.primaryColor,
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.w),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(top: 40.h),
+                      child: Form(
+                        key: viewModel.formKey,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Text("Full Name", style: AppStyles.medium18White),
+                            SizedBox(height: 10.h),
+                            CustomTextFormField(
+                              keyboardType: TextInputType.name,
+                              hintText: "enter your full name",
+                              hintStyle: AppStyles.light18HintText,
+                              controller: fullNameController,
+                              validate: AppValidators.validateFullName,
+                            ),
+                            SizedBox(height: 10.h),
+                            Text(
+                              "Mobile Number",
+                              style: AppStyles.medium18White,
+                            ),
+                            SizedBox(height: 10.h),
+                            CustomTextFormField(
+                              keyboardType: TextInputType.phone,
+                              hintText: "enter your mobile number",
+                              hintStyle: AppStyles.light18HintText,
+                              controller: phoneController,
+                              validate: AppValidators.validatePhoneNumber,
+                            ),
+                            SizedBox(height: 10.h),
+                            Text(
+                              "E-mail address",
+                              style: AppStyles.medium18White,
+                            ),
+                            SizedBox(height: 10.h),
+                            CustomTextFormField(
+                              keyboardType: TextInputType.emailAddress,
+                              hintText: "enter your email address",
+                              hintStyle: AppStyles.light18HintText,
+                              controller: mailController,
+                              validate: AppValidators.validateEmail,
+                            ),
+                            SizedBox(height: 10.h),
+                            Text("Password", style: AppStyles.medium18White),
+                            SizedBox(height: 10.h),
+                            CustomTextFormField(
+                              keyboardType: TextInputType.visiblePassword,
+                              hintText: "enter your password",
+                              hintStyle: AppStyles.light18HintText,
+                              controller: passwordController,
+                              validate: AppValidators.validatePassword,
+                              obscureText: !isPasswordVisible, // ✅
+                              suffixIcon: IconButton(
+                                onPressed: () {
+                                  setState(() {
+                                    isPasswordVisible = !isPasswordVisible;
+                                  });
+                                },
+                                icon: Icon(
+                                  isPasswordVisible
+                                      ? Icons.visibility
+                                      : Icons.visibility_off,
+                                  color: AppColors.primaryColor,
+                                ),
                               ),
                             ),
-                          ),
-                          SizedBox(height: 10.h),
-                          Text("RePassword", style: AppStyles.medium18White),
-                          SizedBox(height: 10.h),
-                          CustomTextFormField(
-                            keyboardType: TextInputType.visiblePassword,
-                            hintText: "enter your password again",
-                            hintStyle: AppStyles.light18HintText,
-                            controller: rePasswordController,
-                            validate: (value) {
-                              return AppValidators.validateConfirmPassword(
-                                value,
-                                passwordController.text,
-                              );
-                            },
-                            obscureText: !isRePasswordVisible, // ✅
-                            suffixIcon: IconButton(
-                              onPressed: () {
-                                setState(() {
-                                  isRePasswordVisible = !isRePasswordVisible;
-                                });
-                              },
-                              icon: Icon(
-                                isRePasswordVisible
-                                    ? Icons.visibility
-                                    : Icons.visibility_off,
-                                color: AppColors.primaryColor,
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(top: 35.h),
-                            child: CustomElevatedButton(
-                              backgroundColor: AppColors.whiteColor,
-                              textStyle: AppStyles.semi20Primary,
-                              text: "Sign up",
-                              onPressed: () {
-                                register();
-                              },
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(top: 30.h, bottom: 30.h),
-                            child: GestureDetector(
-                              onTap: () {
-                                Navigator.pushReplacementNamed(
-                                  context,
-                                  AppRoutes.loginRoute,
+                            SizedBox(height: 10.h),
+                            Text("RePassword", style: AppStyles.medium18White),
+                            SizedBox(height: 10.h),
+                            CustomTextFormField(
+                              keyboardType: TextInputType.visiblePassword,
+                              hintText: "enter your password again",
+                              hintStyle: AppStyles.light18HintText,
+                              controller: rePasswordController,
+                              validate: (value) {
+                                return AppValidators.validateConfirmPassword(
+                                  value,
+                                  passwordController.text,
                                 );
                               },
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      textAlign: TextAlign.center,
-                                      overflow: TextOverflow.ellipsis,
-                                      'Already have an account? login',
-                                      style: AppStyles.medium18White,
-                                      maxLines: 1,
-                                    ),
-                                  ),
-                                ],
+                              obscureText: !isRePasswordVisible, // ✅
+                              suffixIcon: IconButton(
+                                onPressed: () {
+                                  setState(() {
+                                    isRePasswordVisible = !isRePasswordVisible;
+                                  });
+                                },
+                                icon: Icon(
+                                  isRePasswordVisible
+                                      ? Icons.visibility
+                                      : Icons.visibility_off,
+                                  color: AppColors.primaryColor,
+                                ),
                               ),
                             ),
-                          ),
-                        ],
+                            Padding(
+                              padding: EdgeInsets.only(top: 35.h),
+                              child: CustomElevatedButton(
+                                backgroundColor: AppColors.whiteColor,
+                                textStyle: AppStyles.semi20Primary,
+                                text: "Sign up",
+                                onPressed: () {
+                                  viewModel.register(
+                                    email: mailController.text,
+                                    password: passwordController.text,
+                                    phone: phoneController.text,
+                                    name: fullNameController.text,
+                                    rePassword: rePasswordController.text,
+                                  );
+                                },
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(top: 30.h, bottom: 30.h),
+                              child: GestureDetector(
+                                onTap: () {
+                                  Navigator.pushReplacementNamed(
+                                    context,
+                                    AppRoutes.loginRoute,
+                                  );
+                                },
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        textAlign: TextAlign.center,
+                                        overflow: TextOverflow.ellipsis,
+                                        'Already have an account? login',
+                                        style: AppStyles.medium18White,
+                                        maxLines: 1,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
