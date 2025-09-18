@@ -4,14 +4,16 @@ import 'package:e_commerce_app/core/utils/app_routes.dart';
 import 'package:e_commerce_app/core/utils/app_theme.dart';
 import 'package:e_commerce_app/features/ui/auth/login/login_screen.dart';
 import 'package:e_commerce_app/features/ui/auth/register/register_screen.dart';
+import 'package:e_commerce_app/features/ui/pages/home_screen/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   Bloc.observer = MyBlocObserver();
   configureDependencies();
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -26,10 +28,11 @@ class MyApp extends StatelessWidget {
       builder: (context, child) {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
-          initialRoute: AppRoutes.loginRoute,
+          initialRoute: AppRoutes.homeRoute,
           routes: {
             AppRoutes.loginRoute: (context) => LoginScreen(),
             AppRoutes.registerRoute: (context) => RegisterScreen(),
+            AppRoutes.homeRoute: (context) => HomeScreen(),
           },
           theme: AppTheme.lightTheme,
         );

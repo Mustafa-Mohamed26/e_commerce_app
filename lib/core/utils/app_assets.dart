@@ -1,15 +1,16 @@
 class AppAssets {
   // Selected Icons
-  static const String selectedHomeIcon = "assets/icons/home_icon_selected.png";
   static const String editIcon = "assets/icons/edit.png";
-  static const String selectedCategoryIcon = "assets/icons/category_icon_selected.png";
-  static const String selectedAccountIcon = "assets/icons/account_icon_selected.png";
-  static const String selectedAddToFavouriteIcon = "assets/icons/add_to_favourite.png";
+  static const String selectedHomeIcon = "assets/icons/selected_home_icon.png";
+  static const String selectedProductIcon = "assets/icons/selected_product_icon.png";
+  static const String selectedProfileIcon = "assets/icons/selected_profile_icon.png";
+  static const String selectedFavoriteIcon = "assets/icons/selected_favorite_icon.png";
 
 // Not selected icons
-  static const String unSelectedHomeIcon = "assets/icons/home_icon_not_selected.png";
-  static const String unSelectedCategoryIcon = "assets/icons/category_icon_not_selected.png";
-  static const String unSelectedAccountIcon = "assets/icons/account_icon_not_selected.png";
+  static const String unSelectedHomeIcon = "assets/icons/unselected_home_icon.png";
+  static const String unSelectedProductIcon = "assets/icons/unselected_product_icon.png";
+  static const String unSelectedProfileIcon = "assets/icons/unselected_profile_icon.png";
+  static const String unSelectedFavoriteIcon = "assets/icons/unselected_favorite_icon.png";
 
   // More Icons
   static const String unSelectedFavouriteIcon = "assets/icons/favourite_not_selected.png";
@@ -19,9 +20,9 @@ class AppAssets {
   static const String shoppingCart = "assets/icons/shopping_cart.png";
 
   // Announcements Images
-  static const String announcement1 = "assets/images/banner-1.png";
-  static const String announcement2 = "assets/images/banner-2.png";
-  static const String announcement3 = "assets/images/banner-3.png";
+  static const String announcement1 = "assets/images/announcement1.png";
+  static const String announcement2 = "assets/images/announcement2.png";
+  static const String announcement3 = "assets/images/announcement3.png";
 
   // Categories
   static const String beautyCategory = "assets/images/categories/beauty.png";
